@@ -44,7 +44,7 @@ export function createApplicationControls({
     loaderStatus.textContent = 'Flying to Austin, TX...';
     defer(flyToAustin(viewer));
   } else {
-    loaderStatus.textContent = 'Restoring shared view...';
+    loaderStatus.textContent = "Restoring Nijju's view...";
   }
 
   return { styleManager, weatherEffects, cockpitCloudEffects };

@@ -12,6 +12,7 @@ dist
 screenshots/
 qa-shots/
 output/
+data/*.sqlite
 .gev-logs/
 .gev-cache/
 .DS_Store

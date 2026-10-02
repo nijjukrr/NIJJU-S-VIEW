@@ -1,0 +1,247 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="Satellite Operations DBMS dashboard" />
+    <title>Satellite — Operations DBMS</title>
+    <link rel="stylesheet" href="/src/satellite/dashboard.css" />
+  </head>
+  <body>
+    <div class="app-shell">
+      <aside class="sidebar">
+        <a class="brand" href="/satellite.html" aria-label="Satellite home">
+          <span class="brand-mark">S</span
+          ><span><strong>SATELLITE</strong><small>OPERATIONS DBMS</small></span>
+        </a>
+        <nav aria-label="Data collections">
+          <button class="nav-item active" data-view="data_layers">
+            <span>⌘</span> All Nijju’s Eye layers
+            <b data-nav-count="data_layers">0</b>
+          </button>
+          <button
+            class="nav-item"
+            data-view="data_layers"
+            data-category="Defense"
+          >
+            <span>✦</span> Defense & military <b>3</b>
+          </button>
+          <button
+            class="nav-item"
+            data-view="data_layers"
+            data-category="Weather"
+          >
+            <span>◌</span> Weather systems <b>5</b>
+          </button>
+          <button
+            class="nav-item"
+            data-view="data_layers"
+            data-category="Infrastructure"
+          >
+            <span>▦</span> Infrastructure <b>3</b>
+          </button>
+          <div class="nav-divider">DATABASE RECORDS</div>
+          <button class="nav-item" data-view="satellites">
+            <span>◉</span> Satellites <b data-nav-count="satellites">0</b>
+          </button>
+          <button class="nav-item" data-view="flights">
+            <span>✈</span> Active flights <b data-nav-count="flights">0</b>
+          </button>
+          <button class="nav-item" data-view="cameras">
+            <span>▣</span> Online cameras <b data-nav-count="cameras">0</b>
+          </button>
+          <button class="nav-item" data-view="crew">
+            <span>♙</span> Satellite crew <b data-nav-count="crew">0</b>
+          </button>
+        </nav>
+        <div class="source-note">
+          <span class="pulse"></span><strong>Database connected</strong>
+          <p>
+            SQLite operations catalog connected to Nijju’s Eye data categories.
+          </p>
+        </div>
+        <a
+          class="globe-link globe-launch"
+          href="/"
+          target="_blank"
+          rel="noreferrer"
+          >Open complete Nijju’s Eye ↗</a
+        >
+      </aside>
+
+      <main>
+        <header>
+          <div>
+            <p class="eyebrow">MISSION CONTROL / DATABASE CONSOLE</p>
+            <h1>Global operations overview</h1>
+          </div>
+          <div class="clock">
+            <span>LOCAL TIME</span><strong id="clock">--:--:--</strong>
+          </div>
+        </header>
+
+        <section class="live-console" aria-label="Live Nijju’s Eye feeds">
+          <div class="live-title">
+            <span class="pulse"></span><strong>LIVE DATA</strong
+            ><small>OPEN A FEED IN THE 3D GLOBE</small>
+          </div>
+          <div class="live-feeds">
+            <button data-live-layer="cctv">
+              <span>▣</span><b>CAMERAS</b><small>LIVE VIEW</small>
+            </button>
+            <button data-live-layer="satellites">
+              <span>◉</span><b>SATELLITES</b><small>ORBITAL</small>
+            </button>
+            <button data-live-layer="flights">
+              <span>✈</span><b>FLIGHTS</b><small>CIVIL ADS-B</small>
+            </button>
+            <button data-live-layer="military">
+              <span>✦</span><b>MILITARY</b><small>TACTICAL</small>
+            </button>
+            <button data-live-layer="ais-live-vessels">
+              <span>◈</span><b>VESSELS</b><small>AIS LIVE</small>
+            </button>
+            <button data-live-layer="weather-radar">
+              <span>◌</span><b>WEATHER</b><small>RADAR</small>
+            </button>
+          </div>
+        </section>
+
+        <section class="globe-controls" aria-label="Globe launch controls">
+          <div>
+            <span>GLOBE VIEW</span
+            ><strong id="selectedLayerLabel">ALL LAYERS</strong>
+          </div>
+          <div class="zoom-controls">
+            <button id="zoomOut" title="Launch farther away">−</button
+            ><output id="altitudeOutput">12,000 km</output
+            ><button id="zoomIn" title="Launch closer">+</button>
+          </div>
+          <div class="mode-controls" role="group" aria-label="Visual mode">
+            <button class="mode active" data-style="normal">NORMAL</button>
+            <button class="mode" data-style="crt">CRT</button>
+            <button class="mode" data-style="nvg">NVG</button>
+            <button class="mode" data-style="flir">FLIR</button>
+            <button class="mode" data-style="noir">NOIR</button>
+          </div>
+          <button id="launchGlobe" class="launch-primary">
+            OPEN 3D GLOBE ↗
+          </button>
+        </section>
+
+        <section class="notice">
+          <strong>DEMONSTRATION DATA</strong> Records are hardcoded into SQLite
+          for academic DBMS evaluation and are not live tracking data.
+        </section>
+
+        <section class="metrics" aria-label="System metrics">
+          <article>
+            <span class="metric-icon cyan">◉</span>
+            <div>
+              <small>ONLINE SATELLITES</small
+              ><strong id="satelliteMetric">—</strong>
+              <p id="satelliteSub">Loading…</p>
+            </div>
+          </article>
+          <article>
+            <span class="metric-icon blue">✈</span>
+            <div>
+              <small>ACTIVE FLIGHTS</small><strong id="flightMetric">—</strong>
+              <p id="flightSub">Loading…</p>
+            </div>
+          </article>
+          <article>
+            <span class="metric-icon violet">▣</span>
+            <div>
+              <small>ONLINE CAMERAS</small><strong id="cameraMetric">—</strong>
+              <p id="cameraSub">Loading…</p>
+            </div>
+          </article>
+          <article>
+            <span class="metric-icon green">♙</span>
+            <div>
+              <small>ONLINE CREW</small><strong id="crewMetric">—</strong>
+              <p id="crewSub">Loading…</p>
+            </div>
+          </article>
+          <article>
+            <span class="metric-icon amber">⌘</span>
+            <div>
+              <small>INTEGRATED LAYERS</small
+              ><strong id="layerMetric">—</strong>
+              <p id="layerSub">Loading…</p>
+            </div>
+          </article>
+        </section>
+
+        <section id="layerExplorer" class="layer-explorer">
+          <div class="panel-heading">
+            <div>
+              <p class="eyebrow" id="layerEyebrow">COMPLETE DATA CATALOG</p>
+              <h2 id="layerTitle">Every Nijju’s Eye layer</h2>
+            </div>
+            <label class="search"
+              ><span>⌕</span
+              ><input
+                id="layerSearch"
+                type="search"
+                placeholder="Search 28 layers…"
+            /></label>
+          </div>
+          <div id="categoryFilters" class="category-filters"></div>
+          <div id="layerGrid" class="layer-grid"></div>
+          <div class="table-footer">
+            <span id="layerCount">0 integrated layers</span
+            ><span>Select VIEW ON GLOBE to open the actual renderer</span>
+          </div>
+        </section>
+
+        <section id="recordPanel" class="data-panel" hidden>
+          <div class="panel-heading">
+            <div>
+              <p class="eyebrow" id="viewEyebrow">ORBITAL ASSETS</p>
+              <h2 id="viewTitle">Satellite registry</h2>
+            </div>
+            <div class="tools">
+              <label class="search"
+                ><span>⌕</span
+                ><input id="search" type="search" placeholder="Search records…"
+              /></label>
+              <select id="statusFilter" aria-label="Filter by status">
+                <option value="">All statuses</option>
+                <option value="online">Online</option>
+                <option value="active">Active</option>
+                <option value="maintenance">Maintenance</option>
+                <option value="offline">Offline</option>
+                <option value="landed">Landed</option>
+                <option value="delayed">Delayed</option>
+              </select>
+            </div>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead id="tableHead"></thead>
+              <tbody id="tableBody"></tbody>
+            </table>
+          </div>
+          <div class="table-footer">
+            <span id="recordCount">0 records</span
+            ><span>Click any row to inspect</span>
+          </div>
+        </section>
+      </main>
+    </div>
+
+    <dialog id="recordDialog">
+      <button class="dialog-close" aria-label="Close">×</button>
+      <p class="eyebrow" id="dialogType"></p>
+      <h2 id="dialogTitle"></h2>
+      <div id="dialogFields" class="detail-grid"></div>
+      <button id="dialogGlobe" class="dialog-globe">
+        VIEW DATA ON 3D GLOBE ↗
+      </button>
+    </dialog>
+    <div id="toast" role="status"></div>
+    <script type="module" src="/src/satellite/dashboard.js"></script>
+  </body>
+</html>

@@ -1,5 +1,5 @@
 /* ═══════════════════════════════════════════════
-   GOD'S EYE VIEW — Dark Sci-Fi UI
+   NIJJU'S EYE — Dark Sci-Fi UI
    Apple meets Blade Runner
    ═══════════════════════════════════════════════ */
 
@@ -8,9 +8,9 @@
   --glass-bg: rgba(12, 12, 20, 0.72);
   --glass-border: rgba(255, 255, 255, 0.08);
   --glass-border-hover: rgba(255, 255, 255, 0.15);
-  --accent: #00d4ff;
-  --accent-dim: rgba(0, 212, 255, 0.15);
-  --accent-glow: rgba(0, 212, 255, 0.4);
+  --accent: #ff3347;
+  --accent-dim: rgba(255, 51, 71, 0.15);
+  --accent-glow: rgba(255, 51, 71, 0.42);
   --text-primary: #e8eaed;
   --text-secondary: rgba(232, 234, 237, 0.5);
   --text-dim: rgba(232, 234, 237, 0.3);
@@ -586,7 +586,7 @@ body.cockpit-mode #cockpit-cloud-effects.active {
 }
 
 .brand-logo {
-  aspect-ratio: 775 / 520;
+  aspect-ratio: 1 / 1;
   overflow: visible;
   pointer-events: none;
 }
@@ -596,6 +596,17 @@ body.cockpit-mode #cockpit-cloud-effects.active {
   display: block;
   width: 100%;
   height: 100%;
+}
+
+.brand-logo > img {
+  border-radius: 12%;
+  object-fit: cover;
+  object-position: center top;
+}
+
+html.nijju-focused-launch #left-panel-stack,
+html.nijju-focused-launch #right-context-rail {
+  display: none !important;
 }
 
 #title-bar .title-accent,
