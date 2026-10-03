@@ -46,7 +46,7 @@ html.eye-story-open::-webkit-scrollbar {
 }
 .eye-story .eye-story__enter {
   position: absolute;
-  top: 50%;
+  top: 60%;
   left: 50%;
   transform: translate(-50%, -50%);
   display: flex;
@@ -69,18 +69,94 @@ html.eye-story-open::-webkit-scrollbar {
   font-weight: 600;
   letter-spacing: 0.08em;
   cursor: pointer;
+  isolation: isolate;
+  animation: eye-enter-reveal 700ms ease-out both;
+  text-shadow: 0 0 18px #b5eaff70;
   transition:
     border-color 200ms,
     box-shadow 200ms,
-    background 200ms;
+    background 200ms,
+    scale 250ms;
 }
 .eye-story .eye-story__enter:hover {
+  scale: 1.04;
   border-color: #e6f5ff;
   background: linear-gradient(135deg, #24465aee, #102033f5);
   box-shadow:
     0 0 60px #84caff55,
     inset 0 1px 0 #ffffff40,
     0 16px 48px #0008;
+}
+/* Keep the cinematic frame clean: all decorative motion belongs to the CTA. */
+.eye-story__enter::before {
+  content: '';
+  position: absolute;
+  inset: -12px;
+  z-index: -1;
+  border-radius: inherit;
+  background: radial-gradient(
+    ellipse,
+    #60d8ff65,
+    #578aff25 55%,
+    transparent 75%
+  );
+  filter: blur(16px);
+  pointer-events: none;
+  animation: eye-enter-glow 2.8s ease-in-out infinite;
+}
+.eye-story__enter::after {
+  content: '';
+  position: absolute;
+  inset: -2px;
+  border: 2px solid transparent;
+  border-radius: inherit;
+  background: conic-gradient(
+      from var(--eye-enter-angle),
+      transparent 65%,
+      #63d9ff80 80%,
+      #efffff 90%,
+      transparent 96%
+    )
+    border-box;
+  mask:
+    linear-gradient(#fff 0 0) padding-box,
+    linear-gradient(#fff 0 0);
+  mask-composite: exclude;
+  pointer-events: none;
+  animation: eye-enter-orbit 4s linear infinite;
+}
+@property --eye-enter-angle {
+  syntax: '<angle>';
+  initial-value: 0deg;
+  inherits: false;
+}
+@keyframes eye-enter-orbit {
+  to {
+    --eye-enter-angle: 360deg;
+  }
+}
+@keyframes eye-enter-glow {
+  0%,
+  100% {
+    opacity: 0.45;
+    transform: scale(0.96);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.08);
+  }
+}
+@keyframes eye-enter-reveal {
+  from {
+    opacity: 0;
+    translate: 0 14px;
+    filter: blur(5px);
+  }
+  to {
+    opacity: 1;
+    translate: 0 0;
+    filter: blur(0);
+  }
 }
 .eye-story__enter-icon {
   display: grid;
@@ -112,6 +188,12 @@ html.eye-story-open::-webkit-scrollbar {
   }
 }
 @media (prefers-reduced-motion: reduce) {
+  .eye-story__enter,
+  .eye-story__enter::before,
+  .eye-story__enter::after {
+    animation: none !important;
+    transition: none;
+  }
   .eye-story--exiting {
     animation-duration: 1ms;
   }
