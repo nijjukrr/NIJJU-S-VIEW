@@ -140,7 +140,6 @@ async function loadSummary() {
 }
 
 function globeUrl(layer = selectedLayer) {
-  if (!layer) return '/';
   const params = new URLSearchParams({
     lat: '20',
     lon: '78',
@@ -148,10 +147,10 @@ function globeUrl(layer = selectedLayer) {
     heading: '0',
     pitch: '-90',
     style: selectedStyle,
-    map: 'photoreal',
+    map: 'osm',
     v: '2',
-    l: layer.share_token,
   });
+  if (layer) params.set('l', layer.share_token);
   return `/?portal=1#${params}`;
 }
 

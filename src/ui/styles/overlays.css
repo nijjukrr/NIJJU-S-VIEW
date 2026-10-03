@@ -371,3 +371,16 @@
 #intel-hud[data-variant='minimal'] .hud-summary-wrap {
   max-width: 280px;
 }
+
+/* User requested removal of specific UI components */
+#gev-voice-control,
+.map-source-section,
+#key-setup-chip,
+#key-setup,
+.data-toggle-meta,
+.cesium-widget-credits,
+.cesium-credit-logoContainer,
+.cesium-credit-textContainer,
+.cesium-credit-expand-link {
+  display: none !important;
+}

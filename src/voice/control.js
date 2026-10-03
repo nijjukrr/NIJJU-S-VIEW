@@ -8,6 +8,7 @@ export function createVoiceControl({ reset = false } = {}) {
   if (!root) {
     root = document.createElement('div');
     root.id = 'gev-voice-control';
+    root.style.display = 'none';
     root.dataset.status = 'idle';
     root.dataset.speaker = 'idle';
     root.innerHTML = `

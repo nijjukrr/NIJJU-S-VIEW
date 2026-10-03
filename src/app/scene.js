@@ -45,6 +45,7 @@ export async function createApplicationScene({
   // Provider attribution stays visible, including clean-view and recording.
   const creditContainer = document.createElement('div');
   creditContainer.id = 'cesium-credits';
+  creditContainer.style.display = 'none';
   document.body.appendChild(creditContainer);
   defer(() => creditContainer.remove());
   const viewer = createApplicationViewer({
@@ -100,7 +101,7 @@ export async function createApplicationScene({
     ...mapOptions,
     googleTileset: tileset,
     cesiumToken,
-    initialStack: tileset ? 'photoreal' : 'esri-imagery',
+    initialStack: tileset ? 'photoreal' : 'osm',
     // Task 5 (height-datum fix): rebroadcast stack changes as a window
     // CustomEvent so data layers (CCTV per-regime ground resolution) can
     // react without coupling MapStackController to layer modules. Fires on
@@ -114,7 +115,7 @@ export async function createApplicationScene({
     onError: (message) => console.warn('[MapStack]', message),
   });
   defer(() => mapStackController.destroy());
-  await mapStackController.setStack(tileset ? 'photoreal' : 'esri-imagery', {
+  await mapStackController.setStack(tileset ? 'photoreal' : 'osm', {
     silent: true,
   });
 

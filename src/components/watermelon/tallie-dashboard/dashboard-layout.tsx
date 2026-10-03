@@ -1,0 +1,37 @@
+import type { CSSProperties, ReactNode } from 'react';
+import { DashboardSidebar } from './components/tallie/sidebar';
+import { DashboardTopbar } from './components/tallie/topbar';
+import { SidebarProvider } from '@/components/ui/sidebar';
+import './dashboard.css';
+
+type DashboardLayoutProps = {
+  children: ReactNode;
+  sidebar?: ReactNode;
+  topbar?: ReactNode;
+};
+
+export default function DashboardLayout({
+  children,
+  sidebar,
+  topbar,
+}: DashboardLayoutProps) {
+  return (
+    <SidebarProvider
+      defaultOpen
+      className="tallie-dashboard h-svh overflow-hidden no-scrollbar"
+      style={
+        {
+          '--sidebar-width': '18.125rem',
+          '--sidebar-width-icon': '4.25rem',
+        } as CSSProperties
+      }
+    >
+      {sidebar ?? <DashboardSidebar />}
+
+      <main className="flex min-w-0 flex-1 flex-col overflow-hidden">
+        {topbar ?? <DashboardTopbar />}
+        <div className="flex-1 overflow-y-auto">{children}</div>
+      </main>
+    </SidebarProvider>
+  );
+}

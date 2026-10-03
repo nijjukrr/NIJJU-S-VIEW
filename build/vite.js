@@ -1,5 +1,7 @@
 import { applicationHtmlPlugin } from './application-html.js';
 import cesium from 'vite-plugin-cesium';
+import tailwindcss from '@tailwindcss/vite';
+import { fileURLToPath } from 'node:url';
 
 /** Build browser assets with explicit inputs; never load environment or providers. */
 export function createBrowserViteConfig({
@@ -12,7 +14,11 @@ export function createBrowserViteConfig({
   command,
 } = {}) {
   return {
-    plugins: [cesium(), applicationHtmlPlugin(), ...plugins],
+    plugins: [cesium(), applicationHtmlPlugin(), ...tailwindcss(), ...plugins],
+    resolve: {
+      alias: { '@': fileURLToPath(new URL('../src', import.meta.url)) },
+    },
+    esbuild: { jsx: 'automatic' },
     ...(publicDir === undefined ? {} : { publicDir }),
     // A production build must not clean the dependency cache a running dev
     // server is still serving optimized module URLs from.
@@ -51,7 +57,11 @@ export function createBrowserViteConfig({
     build: {
       chunkSizeWarningLimit: 1500,
       rollupOptions: {
-        input: { main: 'index.html', satellite: 'satellite.html' },
+        input: {
+          main: 'index.html',
+          launch: 'launch.html',
+          satellite: 'satellite.html',
+        },
       },
     },
   };

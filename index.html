@@ -4,6 +4,12 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Nijju's Eye</title>
+    <script>
+      const search = new URLSearchParams(window.location.search);
+      if (!search.has('portal') && !search.has('globe')) {
+        window.location.replace('/launch.html');
+      }
+    </script>
     <link rel="icon" type="image/png" href="/nijjus-eye.png" />
     <link rel="stylesheet" href="/style.css" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />

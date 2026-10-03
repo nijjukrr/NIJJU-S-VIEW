@@ -28,7 +28,7 @@
     "runtime": "node",
     "exports": ["./build/vite", "./build/html"],
     "modules": ["build/vite.js", "build/application-html.js"],
-    "external": ["vite-plugin-cesium"]
+    "external": ["vite-plugin-cesium", "@tailwindcss/vite"]
   },
   "live-providers": {
     "runtime": "node",

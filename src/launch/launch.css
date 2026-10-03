@@ -1,0 +1,138 @@
+html.eye-story-open {
+  scrollbar-width: none;
+}
+html.eye-story-open::-webkit-scrollbar {
+  display: none;
+}
+.eye-story {
+  position: fixed;
+  inset: 0;
+  z-index: 99999;
+  overflow: clip;
+  isolation: isolate;
+  background: #030406;
+  color: #fff;
+  font-family: system-ui, sans-serif;
+}
+.eye-story * {
+  box-sizing: border-box;
+  letter-spacing: 0;
+}
+.eye-story__scroll {
+  height: calc(100svh + 11500px);
+}
+.eye-story__world,
+.eye-story__world img,
+.eye-story__film,
+.eye-story__shade {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+.eye-story__world {
+  overflow: hidden;
+}
+.eye-story__world img {
+  object-fit: cover;
+  display: block;
+}
+.eye-story__film,
+.eye-story__still {
+  opacity: 0;
+}
+.eye-story__shade {
+  pointer-events: none;
+  box-shadow: inset 0 -140px 90px -70px #000c;
+}
+.eye-story button {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border: 1px solid #ffffff40;
+  border-radius: 4px;
+  background: #0005;
+  color: #fff;
+  cursor: pointer;
+}
+.eye-story button:hover {
+  background: #fff;
+  color: #141414;
+}
+.eye-story button:focus-visible,
+.eye-story input:focus-visible {
+  outline: 2px solid #fff;
+  outline-offset: 5px;
+}
+.eye-story .material-symbols-outlined {
+  font-family: 'Material Symbols Outlined';
+  font-size: 20px;
+  font-weight: normal;
+  font-style: normal;
+  line-height: 1;
+}
+.eye-story__skip {
+  position: absolute;
+  top: 24px;
+  right: 24px;
+}
+.eye-story__footer {
+  position: absolute;
+  bottom: max(24px, env(safe-area-inset-bottom));
+  left: 32px;
+  right: 32px;
+  display: flex;
+  align-items: end;
+  gap: 24px;
+}
+.eye-story__progress {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+  min-width: 0;
+  padding-right: 68px;
+}
+.eye-story__progress span {
+  font-size: 13px;
+  text-shadow: 0 2px 8px #000;
+}
+.eye-story__progress input {
+  width: 100%;
+  height: 16px;
+  accent-color: #e2d9d7;
+  cursor: pointer;
+}
+.eye-story--exiting {
+  pointer-events: none;
+  animation: eye-story-exit 650ms ease both;
+}
+@keyframes eye-story-exit {
+  to {
+    opacity: 0;
+  }
+}
+@media (max-width: 700px) {
+  .eye-story__scroll {
+    height: calc(100svh + 9000px);
+  }
+  .eye-story__skip {
+    top: 16px;
+    right: 16px;
+  }
+  .eye-story__footer {
+    left: 16px;
+    right: 16px;
+    gap: 12px;
+  }
+  .eye-story__progress {
+    padding-right: 56px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .eye-story--exiting {
+    animation-duration: 1ms;
+  }
+}
