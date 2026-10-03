@@ -37,8 +37,7 @@ html.eye-story-open::-webkit-scrollbar {
   object-fit: cover;
   display: block;
 }
-.eye-story__film,
-.eye-story__still {
+.eye-story__film {
   opacity: 0;
 }
 .eye-story__shade {
@@ -72,10 +71,23 @@ html.eye-story-open::-webkit-scrollbar {
   font-style: normal;
   line-height: 1;
 }
-.eye-story__skip {
+.eye-story__enter {
   position: absolute;
-  top: 24px;
-  right: 24px;
+  bottom: 112px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: auto;
+  min-width: 180px;
+  padding: 0 16px;
+  display: flex;
+  gap: 10px;
+  white-space: nowrap;
+  font-size: 14px;
+  background: #e8e8e8;
+  color: #151515;
+}
+.eye-story__enter[hidden] {
+  display: none;
 }
 .eye-story__footer {
   position: absolute;
@@ -118,9 +130,8 @@ html.eye-story-open::-webkit-scrollbar {
   .eye-story__scroll {
     height: calc(100svh + 9000px);
   }
-  .eye-story__skip {
-    top: 16px;
-    right: 16px;
+  .eye-story__enter {
+    bottom: 104px;
   }
   .eye-story__footer {
     left: 16px;

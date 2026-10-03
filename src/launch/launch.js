@@ -2,15 +2,7 @@ import './launch.css';
 import { createElement } from 'react';
 import { createRoot } from 'react-dom/client';
 import { ArrowRight, RotateCcw } from 'lucide-react';
-import {
-  clamp,
-  EXIT_DURATION,
-  frameAt,
-  frameUrl,
-  MEDIA,
-  stills,
-  stillAt,
-} from './introConfig.js';
+import { clamp, EXIT_DURATION, frameAt, frameUrl } from './introConfig.js';
 import { FrameCache } from './frameCache.js';
 
 export function mountIntro() {
@@ -22,10 +14,9 @@ export function mountIntro() {
     <div class="eye-story__world" aria-hidden="true">
       <img class="eye-story__poster" src="${frameUrl(0)}" alt="">
       <canvas class="eye-story__film"></canvas>
-      ${stills.map((s) => `<img class="eye-story__still" data-scene="${s.file}" src="${MEDIA}${s.file}" alt="" decoding="async">`).join('')}
     </div>
     <div class="eye-story__shade" aria-hidden="true"></div>
-    <button class="eye-story__skip" type="button" aria-label="Skip intro" title="Skip intro"></button>
+    <button class="eye-story__enter" type="button" hidden>Enter OrbitOS <span class="eye-story__enter-icon" aria-hidden="true"></span></button>
     <footer class="eye-story__footer">
       <button class="eye-story__rewind" type="button" aria-label="Rewind story" title="Rewind story"></button>
       <div class="eye-story__progress"><span>Scroll to enter</span><input type="range" min="0" max="1000" step="1" value="0" aria-label="Story progress"></div>
@@ -35,7 +26,7 @@ export function mountIntro() {
   spacer.setAttribute('aria-hidden', 'true');
   document.body.append(root, spacer);
   const iconRoots = [
-    ['.eye-story__skip', ArrowRight],
+    ['.eye-story__enter-icon', ArrowRight],
     ['.eye-story__rewind', RotateCcw],
   ].map(([selector, Icon]) => {
     const iconRoot = createRoot(root.querySelector(selector));
@@ -54,8 +45,8 @@ export function mountIntro() {
   clearTimeout(window.nijjuIntroWatchdog);
   const canvas = root.querySelector('canvas');
   const context = canvas.getContext('2d', { alpha: false });
-  const photos = [...root.querySelectorAll('.eye-story__still')];
   const slider = root.querySelector('input');
+  const enterButton = root.querySelector('.eye-story__enter');
   const preference = matchMedia('(prefers-reduced-motion: reduce)');
   let progress = 0,
     target = 0,
@@ -64,7 +55,6 @@ export function mountIntro() {
     drawnFrame = -1,
     leaving = false,
     scrollRange = 1;
-  let userMoved = false;
   const cache = new FrameCache(wake, { limit: innerWidth < 700 ? 18 : 28 });
   function paint() {
     const index = frameAt(progress);
@@ -88,13 +78,6 @@ export function mountIntro() {
       canvas.dataset.frame = String(index);
       canvas.style.opacity = '1';
     }
-    photos.forEach((photo, i) => {
-      const state = stillAt(stills[i], progress);
-      photo.style.opacity = state.opacity;
-      photo.style.transform = preference.matches
-        ? 'none'
-        : `scale(${state.scale})`;
-    });
     root.dataset.progress = progress.toFixed(5);
     root.dataset.frameTarget = String(index);
     slider.value = Math.round(progress * 1000);
@@ -102,6 +85,7 @@ export function mountIntro() {
       'aria-valuetext',
       `${Math.round(progress * 100)} percent`,
     );
+    enterButton.hidden = progress < 0.9999;
   }
   function tick(now) {
     frame = 0;
@@ -113,10 +97,6 @@ export function mountIntro() {
       (preference.matches ? 1 : 1 - Math.exp(-delta / 85));
     if (Math.abs(target - progress) < 0.00005) progress = target;
     paint();
-    if (userMoved && progress >= 0.9999 && target === 1) {
-      enter();
-      return;
-    }
     if (Math.abs(target - progress) > 0.00005)
       frame = requestAnimationFrame(tick);
   }
@@ -127,7 +107,6 @@ export function mountIntro() {
   }
   function onScroll() {
     target = clamp(window.scrollY / scrollRange);
-    if (target > 0) userMoved = true;
     wake();
   }
   function resize() {
@@ -179,7 +158,7 @@ export function mountIntro() {
       behavior: 'instant',
     }),
   );
-  root.querySelector('.eye-story__skip').addEventListener('click', enter);
+  enterButton.addEventListener('click', enter);
   window.addEventListener('scroll', onScroll, { passive: true });
   window.addEventListener('resize', resize);
   resize();

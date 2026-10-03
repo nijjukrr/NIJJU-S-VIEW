@@ -32,10 +32,10 @@ test("cinematic entry stays inside Nijju's Eye and dismisses without navigation"
   assert.doesNotMatch(introScript, /location\.(assign|replace)|ORBITOPS|5174/);
 });
 
-test('root entry opens the orbital intro unless a globe launch is explicit', () => {
+test('root entry opens the intro even with a portal link unless a globe launch is explicit', () => {
   assert.match(
     indexHtml,
-    /!search\.has\('portal'\) && !search\.has\('globe'\)/,
+    /if \(!search\.has\('globe'\)\)/,
   );
   assert.match(indexHtml, /window\.location\.replace\('\/launch\.html'\)/);
 });
