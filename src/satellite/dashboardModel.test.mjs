@@ -35,6 +35,7 @@ test('globe launch retains selected layer, altitude and visual mode', () => {
   );
   const hash = new URLSearchParams(result.hash.slice(1));
   assert.equal(result.searchParams.get('portal'), '1');
+  assert.equal(result.searchParams.get('globe'), '1');
   assert.equal(hash.get('l'), 's');
   assert.equal(hash.get('alt'), '500000');
   assert.equal(hash.get('style'), 'nvg');
@@ -55,4 +56,9 @@ test('all original collections have a primary field and columns', () => {
   for (const view of Object.values(views))
     assert.ok(view.primary && view.columns.length);
   assert.equal(formatValue('altitude_km', 500), '500 km');
+});
+
+test('unfiltered globe launch also bypasses the intro', () => {
+  const result = new URL(globeUrl(null), 'http://localhost');
+  assert.equal(result.searchParams.get('globe'), '1');
 });

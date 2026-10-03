@@ -73,7 +73,7 @@ export function globeUrl(layer, style = 'normal', altitude = 12000) {
     v: '2',
   });
   if (layer) params.set('l', layer.share_token);
-  return `/?portal=1#${params}`;
+  return `/?globe=1&portal=1#${params}`;
 }
 export function formatValue(key, value) {
   if (value == null || value === '') return '-';

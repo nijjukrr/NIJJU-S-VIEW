@@ -1,7 +1,7 @@
 import './launch.css';
 import { createElement } from 'react';
 import { createRoot } from 'react-dom/client';
-import { ArrowRight, RotateCcw } from 'lucide-react';
+import { ArrowRight } from 'lucide-react';
 import { clamp, EXIT_DURATION, frameAt, frameUrl } from './introConfig.js';
 import { FrameCache } from './frameCache.js';
 
@@ -17,22 +17,18 @@ export function mountIntro() {
     </div>
     <div class="eye-story__shade" aria-hidden="true"></div>
     <button class="eye-story__enter" type="button" hidden>Enter OrbitOS <span class="eye-story__enter-icon" aria-hidden="true"></span></button>
-    <footer class="eye-story__footer">
-      <button class="eye-story__rewind" type="button" aria-label="Rewind story" title="Rewind story"></button>
-      <div class="eye-story__progress"><span>Scroll to enter</span><input type="range" min="0" max="1000" step="1" value="0" aria-label="Story progress"></div>
-    </footer>`;
+`;
   const spacer = document.createElement('div');
   spacer.className = 'eye-story__scroll';
   spacer.setAttribute('aria-hidden', 'true');
   document.body.append(root, spacer);
-  const iconRoots = [
-    ['.eye-story__enter-icon', ArrowRight],
-    ['.eye-story__rewind', RotateCcw],
-  ].map(([selector, Icon]) => {
-    const iconRoot = createRoot(root.querySelector(selector));
-    iconRoot.render(createElement(Icon, { size: 20, 'aria-hidden': true }));
-    return iconRoot;
-  });
+  const iconRoots = [['.eye-story__enter-icon', ArrowRight]].map(
+    ([selector, Icon]) => {
+      const iconRoot = createRoot(root.querySelector(selector));
+      iconRoot.render(createElement(Icon, { size: 20, 'aria-hidden': true }));
+      return iconRoot;
+    },
+  );
   document.documentElement.classList.add('eye-story-open');
   const previousDisplay = shell.style.display;
   const previousRestoration = history.scrollRestoration;
@@ -45,7 +41,6 @@ export function mountIntro() {
   clearTimeout(window.nijjuIntroWatchdog);
   const canvas = root.querySelector('canvas');
   const context = canvas.getContext('2d', { alpha: false });
-  const slider = root.querySelector('input');
   const enterButton = root.querySelector('.eye-story__enter');
   const preference = matchMedia('(prefers-reduced-motion: reduce)');
   let progress = 0,
@@ -80,11 +75,6 @@ export function mountIntro() {
     }
     root.dataset.progress = progress.toFixed(5);
     root.dataset.frameTarget = String(index);
-    slider.value = Math.round(progress * 1000);
-    slider.setAttribute(
-      'aria-valuetext',
-      `${Math.round(progress * 100)} percent`,
-    );
     enterButton.hidden = progress < 0.9999;
   }
   function tick(now) {
@@ -146,18 +136,6 @@ export function mountIntro() {
       history.replaceState(history.state, '', url);
     }, EXIT_DURATION);
   }
-  root.querySelector('.eye-story__rewind').addEventListener('click', () =>
-    window.scrollTo({
-      top: 0,
-      behavior: preference.matches ? 'instant' : 'smooth',
-    }),
-  );
-  slider.addEventListener('input', () =>
-    window.scrollTo({
-      top: (Number(slider.value) / 1000) * scrollRange,
-      behavior: 'instant',
-    }),
-  );
   enterButton.addEventListener('click', enter);
   window.addEventListener('scroll', onScroll, { passive: true });
   window.addEventListener('resize', resize);

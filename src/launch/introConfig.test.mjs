@@ -2,10 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { createHash } from 'node:crypto';
-import {
-  frameAt,
-  FRAME_COUNT,
-} from './introConfig.js';
+import { frameAt, FRAME_COUNT } from './introConfig.js';
 
 test('all 960 source video frames remain available and distinct', () => {
   const hashes = new Set();
@@ -30,9 +27,12 @@ test('film mapping advances continuously without reversing chronology', () => {
   assert.equal(frameAt(0.5), 480);
   assert.equal(frameAt(1), 959);
 });
-test('only Scroll to enter remains as visible intro copy', () => {
+test('intro has no playback controls or copy before the final entry button', () => {
   const code = readFileSync(new URL('./launch.js', import.meta.url), 'utf8');
-  assert.match(code, /Scroll to enter/);
+  assert.doesNotMatch(
+    code,
+    /Scroll to enter|eye-story__rewind|eye-story__progress|<input|<footer/,
+  );
   assert.doesNotMatch(
     code,
     /THE LAST SIGNAL|ARCHIVE 001|FICTIONAL TRANSMISSION|eye-story__line|<h[12]>/,
