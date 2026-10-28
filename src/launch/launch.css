@@ -1,109 +1,631 @@
+@charset "UTF-8";
+
 html.eye-story-open {
   scrollbar-width: none;
 }
+
 html.eye-story-open::-webkit-scrollbar {
   display: none;
 }
+
+/* ==========================================================================
+   Base Layer & Viewport Lock
+   ========================================================================== */
 .eye-story {
   position: fixed;
   inset: 0;
   z-index: 99999;
   overflow: clip;
   isolation: isolate;
-  background: #030406;
-  color: #fff;
-  font-family: system-ui, sans-serif;
+  background: #02060c;
+  color: #f1f5f9;
+  font-family: 'JetBrains Mono', system-ui, -apple-system, sans-serif;
+  user-select: none;
 }
+
 .eye-story * {
   box-sizing: border-box;
-  letter-spacing: 0;
 }
+
 .eye-story__scroll {
-  height: calc(100svh + 11500px);
+  height: calc(100svh + 6500px);
 }
-.eye-story__world,
-.eye-story__world img,
-.eye-story__film,
-.eye-story__shade {
+
+/* ==========================================================================
+   Zoomed-Out Clear Video & Subtle Atmospheric Overlays
+   ========================================================================== */
+.eye-story__world {
   position: absolute;
   inset: 0;
   width: 100%;
   height: 100%;
-}
-.eye-story__world {
   overflow: hidden;
+  background: #02060c;
+  display: grid;
+  place-items: center;
 }
-.eye-story__world img {
-  object-fit: cover;
+
+/* Zoomed-out contained video with crisp edges and high fidelity */
+.eye-story__video {
+  width: 100%;
+  height: 100%;
+  max-width: 88vw;
+  max-height: 80vh;
+  object-fit: contain;
   display: block;
+  transform: scale(0.9);
+  transform-origin: center center;
+  border-radius: 12px;
+  box-shadow:
+    0 0 60px rgba(0, 243, 255, 0.12),
+    0 24px 64px rgba(0, 0, 0, 0.9);
+  border: 1px solid rgba(56, 189, 248, 0.22);
+  will-change: transform;
+  image-rendering: auto;
 }
-.eye-story__film {
-  opacity: 0;
-}
-.eye-story__shade {
-  pointer-events: none;
-  box-shadow: inset 0 -140px 90px -70px #000c;
-}
-.eye-story .eye-story__enter {
+
+.eye-story__grid-overlay {
   position: absolute;
-  top: 60%;
-  left: 50%;
-  transform: translate(-50%, -50%);
+  inset: 0;
+  pointer-events: none;
+  background-image: 
+    linear-gradient(rgba(0, 243, 255, 0.02) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0, 243, 255, 0.02) 1px, transparent 1px);
+  background-size: 60px 60px;
+  background-position: center center;
+}
+
+/* Very subtle scanlines to maintain razor-sharp video readability */
+.eye-story__scanlines {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: repeating-linear-gradient(
+    0deg,
+    rgba(0, 0, 0, 0.1),
+    rgba(0, 0, 0, 0.1) 1px,
+    transparent 1px,
+    transparent 3px
+  );
+  opacity: 0.12;
+}
+
+/* Gentle perimeter vignette that leaves the central video clear */
+.eye-story__vignette {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: radial-gradient(
+    circle at center,
+    transparent 55%,
+    rgba(2, 6, 12, 0.45) 85%,
+    rgba(2, 6, 12, 0.95) 100%
+  );
+}
+
+.eye-story__ambient-glow {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  box-shadow: inset 0 0 100px rgba(0, 243, 255, 0.05);
+}
+
+/* ==========================================================================
+   HUD Interface Container
+   ========================================================================== */
+.eye-story__hud {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 24px 32px;
+  z-index: 10;
+}
+
+/* ==========================================================================
+   Top Header & Telemetry Strip
+   ========================================================================== */
+.eye-story__header {
   display: flex;
   align-items: center;
-  justify-content: center;
-  gap: 24px;
-  width: min(300px, calc(100% - 48px));
-  min-height: 72px;
-  padding: 18px 28px;
-  border: 1px solid #cdeaff80;
+  justify-content: space-between;
+  gap: 20px;
+  width: 100%;
+}
+
+.eye-story__brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.eye-story__beacon {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: #00f3ff;
+  box-shadow: 0 0 12px #00f3ff;
+  animation: eye-beacon-pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+@keyframes eye-beacon-pulse {
+  0%, 100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.35;
+    transform: scale(0.85);
+  }
+}
+
+.eye-story__brand-title {
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  color: #fff;
+  text-shadow: 0 0 12px rgba(0, 243, 255, 0.5);
+}
+
+.eye-story__badge {
+  font-size: 10px;
+  font-weight: 600;
+  padding: 2px 8px;
+  border-radius: 4px;
+  background: rgba(0, 243, 255, 0.12);
+  border: 1px solid rgba(0, 243, 255, 0.3);
+  color: #38bdf8;
+  letter-spacing: 0.08em;
+}
+
+.eye-story__telemetry-strip {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 6px 16px;
+  background: rgba(8, 16, 28, 0.65);
+  border: 1px solid rgba(56, 189, 248, 0.2);
   border-radius: 999px;
-  background: linear-gradient(135deg, #172c3ee6, #050c18ed);
-  box-shadow:
-    0 0 40px #84caff30,
-    inset 0 1px 0 #ffffff30,
-    0 16px 48px #0008;
-  backdrop-filter: blur(18px);
-  color: #f0f8ff;
-  font-size: 16px;
+  backdrop-filter: blur(12px);
+  font-size: 11px;
+  letter-spacing: 0.06em;
+  color: #94a3b8;
+}
+
+.eye-story__telemetry-strip strong {
+  color: #38bdf8;
+  font-weight: 600;
+}
+
+.eye-story__telemetry-sep {
+  color: rgba(255, 255, 255, 0.15);
+}
+
+.eye-story__header-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  pointer-events: auto;
+}
+
+.eye-story__action-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  height: 38px;
+  border-radius: 8px;
+  border: 1px solid rgba(56, 189, 248, 0.25);
+  background: rgba(15, 23, 42, 0.7);
+  backdrop-filter: blur(12px);
+  color: #e2e8f0;
+  font-family: inherit;
+  font-size: 11px;
   font-weight: 600;
   letter-spacing: 0.08em;
   cursor: pointer;
+  transition: all 200ms ease;
+}
+
+.eye-story__action-btn:hover {
+  background: rgba(30, 41, 59, 0.85);
+  border-color: rgba(0, 243, 255, 0.6);
+  color: #00f3ff;
+  box-shadow: 0 0 16px rgba(0, 243, 255, 0.2);
+  transform: translateY(-1px);
+}
+
+.eye-story__audio-btn {
+  padding: 8px;
+  width: 38px;
+  justify-content: center;
+}
+
+/* ==========================================================================
+   Center Animated Reticle (Framing the upper eye gracefully)
+   ========================================================================== */
+.eye-story__reticle {
+  position: absolute;
+  top: 36%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 190px;
+  height: 190px;
+  display: grid;
+  place-items: center;
+  pointer-events: none;
+  opacity: 0.55;
+}
+
+.eye-story__reticle-ring {
+  position: absolute;
+  inset: 0;
+  border: 1px dashed rgba(0, 243, 255, 0.4);
+  border-radius: 50%;
+  box-shadow: 0 0 20px rgba(0, 243, 255, 0.15);
+  transition: transform 120ms ease-out;
+}
+
+.eye-story__reticle-cross {
+  color: rgba(0, 243, 255, 0.85);
+  filter: drop-shadow(0 0 8px rgba(0, 243, 255, 0.6));
+  animation: eye-reticle-breathe 4s ease-in-out infinite;
+}
+
+@keyframes eye-reticle-breathe {
+  0%, 100% {
+    transform: scale(0.95);
+    opacity: 0.8;
+  }
+  50% {
+    transform: scale(1.08);
+    opacity: 1;
+  }
+}
+
+.eye-story__reticle-brackets {
+  position: absolute;
+  inset: -12px;
+  border-left: 2px solid rgba(0, 243, 255, 0.7);
+  border-right: 2px solid rgba(0, 243, 255, 0.7);
+  border-top: 2px solid transparent;
+  border-bottom: 2px solid transparent;
+  border-radius: 12px;
+}
+
+.eye-story__reticle-brackets::before,
+.eye-story__reticle-brackets::after {
+  content: '';
+  position: absolute;
+  width: 12px;
+  height: 2px;
+  background: rgba(0, 243, 255, 0.7);
+}
+
+.eye-story__reticle-brackets::before {
+  top: 0;
+  left: 0;
+}
+
+.eye-story__reticle-brackets::after {
+  bottom: 0;
+  right: 0;
+}
+
+.eye-story__reticle-info {
+  position: absolute;
+  bottom: -38px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  color: #7dd3fc;
+  text-shadow: 0 0 8px rgba(0, 243, 255, 0.5);
+}
+
+.eye-story__reticle-time {
+  font-weight: 700;
+  color: #00f3ff;
+}
+
+/* ==========================================================================
+   Milestone Narrative Cards (Positioned lower left)
+   ========================================================================== */
+.eye-story__narrative {
+  position: absolute;
+  bottom: 84px;
+  left: 36px;
+  width: min(380px, calc(100% - 72px));
+  height: 120px;
+  pointer-events: none;
+}
+
+.eye-story__card {
+  position: absolute;
+  inset: 0;
+  padding: 16px 20px;
+  border-radius: 12px;
+  background: linear-gradient(
+    135deg,
+    rgba(10, 22, 40, 0.9),
+    rgba(3, 8, 16, 0.96)
+  );
+  border: 1px solid rgba(56, 189, 248, 0.25);
+  box-shadow:
+    0 8px 32px rgba(0, 0, 0, 0.7),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(18px);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 5px;
+  opacity: 0;
+  transform: translateY(14px) scale(0.97);
+  filter: blur(4px);
+  transition: all 450ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.eye-story__card.active {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+  filter: blur(0);
+}
+
+.eye-story__card-tag {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  color: #00f3ff;
+  text-shadow: 0 0 10px rgba(0, 243, 255, 0.4);
+}
+
+.eye-story__card-title {
+  margin: 0;
+  font-size: 15px;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  color: #ffffff;
+  text-transform: uppercase;
+}
+
+.eye-story__card-desc {
+  margin: 0;
+  font-size: 11.5px;
+  line-height: 1.45;
+  color: #94a3b8;
+  font-family: system-ui, sans-serif;
+}
+
+/* ==========================================================================
+   Vertical Telemetry Rail (Right Edge)
+   ========================================================================== */
+.eye-story__rail {
+  position: absolute;
+  right: 32px;
+  top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  pointer-events: none;
+}
+
+.eye-story__rail-head {
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.15em;
+  color: #38bdf8;
+}
+
+.eye-story__rail-track {
+  position: relative;
+  width: 4px;
+  height: 200px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 999px;
+  overflow: visible;
+}
+
+.eye-story__rail-fill {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 0%;
+  background: linear-gradient(180deg, #38bdf8, #00f3ff);
+  border-radius: 999px;
+  box-shadow: 0 0 12px #00f3ff;
+  transition: height 80ms linear;
+}
+
+.eye-story__rail-pip {
+  position: absolute;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #0f172a;
+  border: 1px solid rgba(56, 189, 248, 0.4);
+}
+
+.eye-story__rail-val {
+  font-size: 12px;
+  font-weight: 700;
+  color: #00f3ff;
+  text-shadow: 0 0 8px rgba(0, 243, 255, 0.6);
+}
+
+/* ==========================================================================
+   Footer Controls & Scroll Prompt
+   ========================================================================== */
+.eye-story__footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+}
+
+.eye-story__mode-pill {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 6px 14px;
+  border-radius: 999px;
+  background: rgba(15, 23, 42, 0.65);
+  border: 1px solid rgba(56, 189, 248, 0.2);
+  backdrop-filter: blur(12px);
+  pointer-events: auto;
+}
+
+.eye-story__play-btn {
+  display: grid;
+  place-items: center;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background: rgba(0, 243, 255, 0.15);
+  border: 1px solid rgba(0, 243, 255, 0.4);
+  color: #00f3ff;
+  cursor: pointer;
+  transition: all 180ms ease;
+}
+
+.eye-story__play-btn:hover {
+  background: #00f3ff;
+  color: #000;
+  box-shadow: 0 0 12px #00f3ff;
+}
+
+.eye-story__mode-text {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  color: #94a3b8;
+}
+
+.eye-story__scroll-prompt {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  transition: opacity 300ms ease;
+}
+
+.eye-story__scroll-label {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  color: #7dd3fc;
+  text-shadow: 0 0 10px rgba(0, 243, 255, 0.4);
+}
+
+.eye-story__scroll-chevron {
+  color: #00f3ff;
+  animation: eye-chevron-bounce 1.6s ease-in-out infinite;
+}
+
+@keyframes eye-chevron-bounce {
+  0%, 100% {
+    transform: translateY(0);
+    opacity: 0.6;
+  }
+  50% {
+    transform: translateY(6px);
+    opacity: 1;
+  }
+}
+
+.eye-story__hud-status {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  color: #64748b;
+}
+
+.eye-story__pulse-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #10b981;
+  box-shadow: 0 0 8px #10b981;
+}
+
+/* ==========================================================================
+   ENTER ORBITOS Button (Positioned Below the Logo & Text)
+   ========================================================================== */
+.eye-story .eye-story__enter {
+  position: absolute;
+  bottom: 44px;
+  top: auto;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+  width: min(340px, calc(100% - 48px));
+  min-height: 70px;
+  padding: 16px 32px;
+  border: 1px solid rgba(0, 243, 255, 0.65);
+  border-radius: 999px;
+  background: linear-gradient(135deg, rgba(8, 30, 52, 0.96), rgba(3, 12, 24, 0.98));
+  box-shadow:
+    0 0 50px rgba(0, 243, 255, 0.32),
+    inset 0 1px 0 rgba(255, 255, 255, 0.4),
+    0 20px 50px rgba(0, 0, 0, 0.9);
+  backdrop-filter: blur(20px);
+  color: #ffffff;
+  font-size: 16px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  cursor: pointer;
+  pointer-events: auto;
   isolation: isolate;
-  animation: eye-enter-reveal 700ms ease-out both;
-  text-shadow: 0 0 18px #b5eaff70;
+  text-shadow: 0 0 16px rgba(0, 243, 255, 0.7);
+  animation: eye-enter-reveal 600ms ease-out both;
   transition:
     border-color 200ms,
-    box-shadow 200ms,
+    box-shadow 250ms,
     background 200ms,
-    scale 250ms;
+    transform 200ms;
 }
+
 .eye-story .eye-story__enter:hover {
-  scale: 1.04;
-  border-color: #e6f5ff;
-  background: linear-gradient(135deg, #24465aee, #102033f5);
+  transform: translateX(-50%) scale(1.05);
+  border-color: #00f3ff;
+  background: linear-gradient(135deg, rgba(14, 46, 78, 0.98), rgba(6, 20, 38, 0.99));
   box-shadow:
-    0 0 60px #84caff55,
-    inset 0 1px 0 #ffffff40,
-    0 16px 48px #0008;
+    0 0 70px rgba(0, 243, 255, 0.6),
+    inset 0 1px 0 rgba(255, 255, 255, 0.6),
+    0 24px 60px rgba(0, 0, 0, 0.95);
 }
-/* Keep the cinematic frame clean: all decorative motion belongs to the CTA. */
+
 .eye-story__enter::before {
   content: '';
   position: absolute;
-  inset: -12px;
+  inset: -14px;
   z-index: -1;
   border-radius: inherit;
   background: radial-gradient(
     ellipse,
-    #60d8ff65,
-    #578aff25 55%,
+    rgba(0, 243, 255, 0.5),
+    rgba(56, 189, 248, 0.2) 55%,
     transparent 75%
   );
-  filter: blur(16px);
+  filter: blur(18px);
   pointer-events: none;
   animation: eye-enter-glow 2.8s ease-in-out infinite;
 }
+
 .eye-story__enter::after {
   content: '';
   position: absolute;
@@ -112,9 +634,9 @@ html.eye-story-open::-webkit-scrollbar {
   border-radius: inherit;
   background: conic-gradient(
       from var(--eye-enter-angle),
-      transparent 65%,
-      #63d9ff80 80%,
-      #efffff 90%,
+      transparent 60%,
+      rgba(0, 243, 255, 0.8) 80%,
+      #efffff 92%,
       transparent 96%
     )
     border-box;
@@ -123,22 +645,24 @@ html.eye-story-open::-webkit-scrollbar {
     linear-gradient(#fff 0 0);
   mask-composite: exclude;
   pointer-events: none;
-  animation: eye-enter-orbit 4s linear infinite;
+  animation: eye-enter-orbit 3.5s linear infinite;
 }
+
 @property --eye-enter-angle {
   syntax: '<angle>';
   initial-value: 0deg;
   inherits: false;
 }
+
 @keyframes eye-enter-orbit {
   to {
     --eye-enter-angle: 360deg;
   }
 }
+
 @keyframes eye-enter-glow {
-  0%,
-  100% {
-    opacity: 0.45;
+  0%, 100% {
+    opacity: 0.5;
     transform: scale(0.96);
   }
   50% {
@@ -146,55 +670,142 @@ html.eye-story-open::-webkit-scrollbar {
     transform: scale(1.08);
   }
 }
+
 @keyframes eye-enter-reveal {
   from {
     opacity: 0;
-    translate: 0 14px;
-    filter: blur(5px);
+    transform: translate(-50%, 20px);
+    filter: blur(8px);
   }
   to {
     opacity: 1;
-    translate: 0 0;
+    transform: translate(-50%, 0);
     filter: blur(0);
   }
 }
+
 .eye-story__enter-icon {
   display: grid;
   place-items: center;
-  transition: transform 200ms;
+  transition: transform 200ms ease;
 }
+
 .eye-story__enter:hover .eye-story__enter-icon {
-  transform: translateX(4px);
+  transform: translateX(6px);
 }
+
 .eye-story__enter:focus-visible {
-  outline: 2px solid #fff;
+  outline: 2px solid #00f3ff;
   outline-offset: 6px;
 }
+
 .eye-story .eye-story__enter[hidden] {
-  display: none;
+  display: none !important;
 }
+
+/* ==========================================================================
+   Hyperspace / Warp Exit Animation
+   ========================================================================== */
 .eye-story--exiting {
   pointer-events: none;
-  animation: eye-story-exit 650ms ease both;
+  animation: eye-story-exit 650ms cubic-bezier(0.16, 1, 0.3, 1) both;
 }
+
 @keyframes eye-story-exit {
-  to {
+  0% {
+    opacity: 1;
+    transform: scale(1);
+    filter: blur(0);
+  }
+  50% {
+    opacity: 0.8;
+    transform: scale(1.06);
+    filter: blur(6px) brightness(1.4);
+  }
+  100% {
     opacity: 0;
+    transform: scale(1.12);
+    filter: blur(16px) brightness(2);
   }
 }
-@media (max-width: 700px) {
-  .eye-story__scroll {
-    height: calc(100svh + 9000px);
+
+/* ==========================================================================
+   Responsive Adaptations
+   ========================================================================== */
+@media (max-width: 900px) {
+  .eye-story__telemetry-strip {
+    display: none;
+  }
+  .eye-story__rail {
+    right: 16px;
+  }
+  .eye-story__video {
+    max-width: 96vw;
+    max-height: 85vh;
+    transform: scale(0.95);
   }
 }
+
+@media (max-width: 680px) {
+  .eye-story__hud {
+    padding: 16px 18px;
+  }
+  .eye-story__brand-title {
+    font-size: 12px;
+  }
+  .eye-story__badge {
+    display: none;
+  }
+  .eye-story__narrative {
+    bottom: 120px;
+    left: 18px;
+    width: calc(100% - 36px);
+  }
+  .eye-story__card {
+    padding: 12px 14px;
+  }
+  .eye-story__card-title {
+    font-size: 13px;
+  }
+  .eye-story__card-desc {
+    font-size: 11px;
+  }
+  .eye-story__rail {
+    display: none;
+  }
+  .eye-story__reticle {
+    width: 140px;
+    height: 140px;
+    top: 32%;
+  }
+  .eye-story__footer {
+    justify-content: center;
+  }
+  .eye-story__mode-pill,
+  .eye-story__hud-status {
+    display: none;
+  }
+  .eye-story .eye-story__enter {
+    bottom: 28px;
+    min-height: 60px;
+    font-size: 14px;
+  }
+}
+
+/* ==========================================================================
+   Reduced Motion
+   ========================================================================== */
 @media (prefers-reduced-motion: reduce) {
   .eye-story__enter,
   .eye-story__enter::before,
-  .eye-story__enter::after {
+  .eye-story__enter::after,
+  .eye-story__beacon,
+  .eye-story__reticle-cross,
+  .eye-story__scroll-chevron {
     animation: none !important;
-    transition: none;
+    transition: none !important;
   }
   .eye-story--exiting {
-    animation-duration: 1ms;
+    animation-duration: 1ms !important;
   }
 }
